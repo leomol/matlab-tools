@@ -7,6 +7,9 @@
 %   s = shift(t1, t2);
 %   disp(t2 + s);
 %   disp([t1; ismember(t1, t2 + s)]);
+
+% 2020-03-21. Leonardo Molina.
+% 2020-05-21. Last modified.
 function s = shift(t1, t2)
     t1 = unique(t1(:));
     t2 = unique(t2(:));

@@ -11,6 +11,9 @@
 %   delta = circdiff(data, mn, mx);
 %   fprintf('Difference:\n  ');
 %   disp(delta);
+
+% 2020-05-16. Leonardo Molina.
+% 2020-05-21. Last modified.
 function delta = circdiff(data, mn, mx)
     if nargin < 2
         mn = min(data);
