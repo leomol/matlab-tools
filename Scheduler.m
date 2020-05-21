@@ -19,7 +19,7 @@
 %     obj.delay({@delete, handle}, 5);
 
 % 2016-05-12. Leonardo Molina.
-% 2018-05-25. Last modified.
+% 2019-02-28. Last modified.
 classdef Scheduler < handle
     properties (Access = private)
         tickers = []
@@ -50,33 +50,42 @@ classdef Scheduler < handle
         end
         
         function handle = repeat(obj, callback, period, repetitions)
-            % handle = Scheduler.repeat(period, callback, repetitions)
+            % handle = Scheduler.repeat(callback, period, repetitions)
             % Invoke a callback a number of times, with the given
             % periodicity. Repetitions defaults to infinity.
             % Output handle is a reference to this process.
             % See also Callbacksstop, Callbacks.invoke.
             
-            period = min(max(round(period * 1e3), 0), 2.1474e6) / 1e3;
-            if ~iscell(callback)
-                callback = {callback};
-            end
-            if nargin < 4
-                repetitions = Inf;
-            end
-            if period == 0
+            if isinf(period)
                 ticker = timer();
                 handle = Scheduler.Handle(ticker);
-                Callbacks.invoke(callback{:});
             else
-                if repetitions == 1
-                    ticker = timer('Name', obj.className, 'TimerFcn', {@Timers.finalize, callback{:}}, 'ExecutionMode', 'fixedSpacing', 'StartDelay', period, 'Period', period, 'TasksToExecute', repetitions, 'BusyMode', 'queue'); %#ok<CCAT>
-                else
-                    ticker = timer('Name', obj.className, 'TimerFcn', {@Timers.forward, callback{:}}, 'ExecutionMode', 'fixedSpacing', 'StartDelay', period, 'Period', period, 'TasksToExecute', repetitions, 'BusyMode', 'drop'); %#ok<CCAT>
+                period = min(max(round(period * 1e3), 0), 2.1474e6) / 1e3;
+                if ~iscell(callback)
+                    callback = {callback};
                 end
-                handle = Scheduler.Handle(ticker);
-                start(ticker);
+                if nargin < 4
+                    repetitions = Inf;
+                end
+                if period == 0
+                    ticker = timer();
+                    handle = Scheduler.Handle(ticker);
+                    Callbacks.invoke(callback{:});
+                else
+                    if repetitions == 1
+                        ticker = timer('Name', obj.className, 'TimerFcn', {@Timers.finalize, callback{:}}, 'ExecutionMode', 'fixedSpacing', 'StartDelay', period, 'Period', period, 'TasksToExecute', repetitions, 'BusyMode', 'queue'); %#ok<CCAT>
+                    else
+                        ticker = timer('Name', obj.className, 'TimerFcn', {@Timers.forward, callback{:}}, 'ExecutionMode', 'fixedSpacing', 'StartDelay', period, 'Period', period, 'TasksToExecute', repetitions, 'BusyMode', 'drop'); %#ok<CCAT>
+                    end
+                    handle = Scheduler.Handle(ticker);
+                    start(ticker);
+                end
             end
-            obj.tickers = [obj.tickers, ticker];
+            if isvalid(obj)
+                obj.tickers = [obj.tickers, ticker];
+            else
+                delete(ticker);
+            end
         end
         
         function stop(obj)

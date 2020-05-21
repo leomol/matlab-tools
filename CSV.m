@@ -1,5 +1,7 @@
+% CSV - tools for parsing comma-separated values (CSV) files.
+
 % 2015-10-06. Leonardo Molina.
-% 2018-05-03. Last modified.
+% 2018-08-14. Last modified.
 classdef CSV
     methods (Static)
         function csv = load(filename)
@@ -10,7 +12,7 @@ classdef CSV
             csv = csv{1};
         end
         
-        function data = parse(csv, selection, varargin)
+        function [data, index] = parse(csv, selection, varargin)
             % data = CSV.parse(csv, selection, label1, label2, ...)
             % Return a cell array of strings from a csv array with literal matches.
             % selection: Index of columns to extract relative to label1, e.g. [-1, 3, 4]

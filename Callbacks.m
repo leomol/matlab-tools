@@ -1,12 +1,14 @@
 % Callbacks - Generic methods to invoke methods or functions with arbitrary
-% number of arguments.
+% number of arguments. Further arguments may be appended to input callbacks.
+% When invoking methods, the validity of the object may also be checked.
+% 
 % 
 % Callbacks methods:
 %   invoke - Invoke a method or a function with arguments.
 %   void   - Generic function with arbitrary number of inputs and outputs.
 
 % 2016-05-12. Leonardo Molina.
-% 2018-05-24. Last modified.
+% 2018-06-08. Last modified.
 classdef Callbacks
     methods (Static)
         function invoke(varargin)
